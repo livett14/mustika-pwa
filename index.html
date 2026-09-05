@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mustika Exchange</title>
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="push-toast" id="pushToast" role="status" aria-live="polite">
+  <img class="push-toast-icon" src="icons/m-logo-128.png" alt="" width="38" height="38" />
+  <div class="push-toast-body">
+    <div class="push-toast-top">
+      <span class="push-toast-app">TikTok LIVE Rewards</span>
+      <span class="push-toast-time" id="pushToastTime">now</span>
+    </div>
+    <p class="push-toast-text">Successfully sent coins to recipient</p>
+  </div>
+</div>
+
+<div class="screen" id="mainScreen">
+
+  <header class="topbar">
+    <button class="icon-btn" id="backBtn" aria-label="Go back">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h1>Exchange</h1>
+    <span class="topbar-spacer"></span>
+  </header>
+
+  <section class="balance-plain">
+    <span class="balance-label">Tiktok Coins Balance</span>
+    <input class="balance-usd" id="coinBalanceInput" type="text" inputmode="decimal" value="$0.00" aria-label="Tiktok Coins Balance" />
+    <span class="balance-compare" id="balanceCompare">= $0.00</span>
+    <span class="balance-caption">Available balance to exchange the Coins</span>
+  </section>
+
+  <section class="field-block">
+    <label class="field-label bold" for="usernameInput">TikTok username</label>
+    <div class="username-autocomplete">
+      <div class="input-wrap plain">
+        <span class="at-sign">@</span>
+        <input id="usernameInput" type="text" placeholder="your_TikTok_handle" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="usernameSuggestions" aria-expanded="false" />
+        <button class="clear-btn" id="clearBtn" aria-label="Hapus" hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="username-suggestions" id="usernameSuggestions" role="listbox" hidden></div>
+      <div class="username-search-status" id="usernameSearchStatus" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="field-block">
+    <label class="field-label bold">Exchange earnings for Coins</label>
+    <div class="packages" id="packages" role="listbox" aria-label="Pilih paket coin"></div>
+    <div class="input-wrap plain custom-amount">
+      <input id="customAmountInput" type="text" inputmode="none" placeholder="Enter a custom number or amount" autocomplete="off" readonly />
+    </div>
+  </section>
+
+  <p class="legal-note">Coins obtained through this exchange are subject to our <strong>Virtual Items Policy.</strong> Since you are accepting your Coins, they are non-refundable.</p>
+
+  <button class="exchange-btn" id="exchangeBtn" disabled>Exchange</button>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="screen success-screen" id="successScreen" hidden>
+  <div class="success-body">
+    <div class="success-check">
+      <svg viewBox="0 0 24 24" width="30" height="30"><path d="M20 6L9 17l-5-5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <h1 class="success-title">Exchange Completed!</h1>
+    <p class="success-subtitle">
+      You exchanged for
+      <img class="coin-mark" src="icons/coin-64.png" alt="" width="16" height="16" />
+      <strong id="successCoinsHeadline">0</strong> Coins
+    </p>
+
+    <div class="success-details">
+      <div class="success-row">
+        <span>Recipient</span>
+        <strong id="successRecipient">@username</strong>
+      </div>
+      <div class="success-row">
+        <span>Coins Exchanged</span>
+        <strong id="successCoinsExchanged">0 Coins</strong>
+      </div>
+      <div class="success-row">
+        <span>Deducted Amount</span>
+        <strong id="successDeducted">$0.00</strong>
+      </div>
+      <div class="success-row success-row-last">
+        <span>Time</span>
+        <strong id="successTime">-</strong>
+      </div>
+    </div>
+
+    <div class="success-promo">
+      <img class="success-promo-icon" src="icons/m-logo-128.png" alt="Mustika" width="44" height="44" />
+      <div class="success-promo-text">
+        <h3>Start gifter level</h3>
+        <p>Send your first Gift to begin your gifter journey and unlock more rewards as you level up.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="success-back-btn" id="successBackBtn" type="button">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Go back
+  </button>
+</div>
+
+<div class="screen rewards-screen" id="rewardsScreen" hidden>
+
+  <div class="rewards-promo-wrap" id="rewardsPromoWrap">
+    <div class="rewards-promo-head">
+      <h2>Say hi to Scaled LIVE Rewards</h2>
+      <button class="rewards-promo-close" id="rewardsPromoClose" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <p class="rewards-promo-text">Your dedication to quality content could get you a rewards percentage of up to 53%.</p>
+    <a href="#" class="rewards-learn-more" id="rewardsLearnMore">Learn more</a>
+    <div class="rewards-divider"></div>
+  </div>
+
+  <div class="rewards-cards">
+    <div class="rewards-card">
+      <span class="rewards-card-label">Available rewards</span>
+      <strong class="rewards-card-value" id="rewardsAvailableSmall">$0.00</strong>
+    </div>
+    <div class="rewards-card">
+      <span class="rewards-card-label">Upcoming rewards</span>
+      <strong class="rewards-card-value">$2,000,000.00</strong>
+    </div>
+  </div>
+
+  <div class="rewards-main">
+    <span class="rewards-main-label">Available rewards</span>
+    <div class="rewards-main-value" id="rewardsAvailableBig">$0.00</div>
+    <div class="rewards-main-sub">
+      = <span id="rewardsAvailableSubUsd">$0.00</span>
+      (<img class="coin-mark" src="icons/coin-64.png" alt="" width="14" height="14" /><span id="rewardsAvailableSubCoins">0</span>)
+    </div>
+  </div>
+
+  <button class="rewards-exchange-btn" id="rewardsExchangeBtn" type="button">Exchange</button>
+  <button class="rewards-withdraw-btn" id="rewardsWithdrawBtn" type="button">Withdraw</button>
+
+  <p class="rewards-limit-text">Daily Withdrawal limit (Remain/Total): <strong>$1,000/$1,000</strong></p>
+
+  <div class="rewards-history" id="rewardsHistory">
+    <p class="rewards-history-empty" id="rewardsHistoryEmpty">Belum ada riwayat transaksi.</p>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmModalOverlay">
+  <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <button class="confirm-close" id="confirmModalClose" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="confirm-icon">
+      <img src="icons/coin-64.png" alt="" width="40" height="40" />
+    </div>
+
+    <h3 class="confirm-title" id="confirmModalTitle">Complete exchange?</h3>
+    <p class="confirm-text" id="confirmText">$0.00 will be deducted from LIVE rewards balance and sent to <strong>@username</strong></p>
+
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-cancel" id="confirmCancelBtn" type="button">Go back</button>
+      <button class="confirm-btn confirm-ok" id="confirmOkBtn" type="button">Exchange</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="customModalOverlay">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
+
+    <div class="modal-header">
+      <h2 id="customModalTitle">Costum</h2>
+      <button class="modal-close" id="customModalClose" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <button class="modal-dropdown" type="button">
+      Number of Coins
+      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div class="modal-coin-row">
+      <span class="modal-coin-value">
+        <img class="coin-mark" src="icons/coin-64.png" alt="" width="22" height="22" />
+        <span id="modalCoinAmount">0</span>
+      </span>
+      <button class="modal-all-btn" id="modalAllBtn" type="button">All</button>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <div class="modal-approx" id="modalApprox">≈ $0.00</div>
+
+    <div class="keypad" id="modalKeypad">
+      <button class="keypad-btn" type="button" data-key="1">1</button>
+      <button class="keypad-btn" type="button" data-key="2">2</button>
+      <button class="keypad-btn" type="button" data-key="3">3</button>
+      <button class="keypad-btn keypad-backspace" type="button" data-key="back" aria-label="Hapus">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 4H8l-6 8 6 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 9.5l4 5M18 9.5l-4 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="keypad-btn" type="button" data-key="4">4</button>
+      <button class="keypad-btn" type="button" data-key="5">5</button>
+      <button class="keypad-btn" type="button" data-key="6">6</button>
+      <button class="keypad-btn" type="button" data-key="000">000</button>
+      <button class="keypad-btn" type="button" data-key="7">7</button>
+      <button class="keypad-btn" type="button" data-key="8">8</button>
+      <button class="keypad-btn" type="button" data-key="9">9</button>
+      <button class="keypad-btn" type="button" data-key="0">0</button>
+    </div>
+
+    <div class="modal-total-row">
+      <span class="modal-total-label">
+        Total
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="11.1" y="10.2" width="1.8" height="6" rx="0.9" fill="currentColor"/><rect x="11.1" y="6.8" width="1.8" height="1.8" rx="0.9" fill="currentColor"/></svg>
+      </span>
+      <span class="modal-total-value" id="modalTotalValue">$0.00</span>
+    </div>
+
+    <div class="modal-legal">
+      <span class="modal-legal-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="13" height="13"><path d="M20 6L9 17l-5-5" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <p>Coins obtained through this exchange are subject to our <strong>Virtual Items Policy.</strong> Since you are accepting your Coins, they are non-refundable.</p>
+    </div>
+
+    <button class="modal-exchange-btn" id="modalExchangeBtn" type="button" disabled>Exchange</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
